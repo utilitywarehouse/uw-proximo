@@ -8,6 +8,6 @@ RUN make build
 
 FROM alpine:3.9
 RUN apk add --no-cache ca-certificates
-COPY --from=build /proximo-server /bin/proximo-server
+COPY --from=build /proximo/proximo-server /bin/proximo-server
 
 ENTRYPOINT [ "proximo-server" ]
