@@ -115,6 +115,7 @@ func (cs *statusChecker) checkStatus() checkResult {
 				cs.incFailedForConn(c)
 				continue
 			}
+			c.failedCount = 0
 			working++
 		}
 
