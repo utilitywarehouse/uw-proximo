@@ -59,6 +59,13 @@ func main() {
 		EnvVar: "PROXIMO_PROBE_PORT",
 	})
 
+	maxFailedChecks := app.Int(cli.IntOpt{
+		Name:   "max-failed-checks",
+		Value:  3,
+		Desc:   "Maximum number or consecutively failed health checks for a single connection.",
+		EnvVar: "PROXIMO_MAX_FAILED_CHECKS",
+	})
+
 	endpoints := app.String(cli.StringOpt{
 		Name:   "endpoints",
 		Value:  fmt.Sprintf("%s,%s", consumeEndpoint, publishEndpoint),
@@ -173,7 +180,7 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-	if err := listenAndServe(sourceFactory, sinkFactory, *port, *probePort); err != nil {
+	if err := listenAndServe(sourceFactory, sinkFactory, *port, *probePort, *maxFailedChecks); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Server terminated cleanly")
@@ -195,8 +202,10 @@ func parseEndpoints(endpoints string) map[string]bool {
 	return enabled
 }
 
-func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proximo.AsyncSinkFactory, port, probePort int) error {
+func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proximo.AsyncSinkFactory, port, probePort, maxFailedChecks int) error {
 	opStatus := newOpStatus(port)
+	backendChecker := instrumented.NewBackendStatusChecker(maxFailedChecks)
+	opStatus.AddChecker("backend", backendChecker.CheckStatus)
 	startOperationalServer(probePort, opStatus)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
@@ -226,17 +235,17 @@ func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proxim
 
 	if sinkFactory != nil {
 		sinkFactory = instrumented.AsyncSinkFactory{
-			OpStatus:    opStatus,
-			CounterOpts: sinkCounterOpts,
-			SinkFactory: sinkFactory,
+			BackendStatusChecker: backendChecker,
+			CounterOpts:          sinkCounterOpts,
+			SinkFactory:          sinkFactory,
 		}
 		proto.RegisterMessageSinkServer(grpcServer, &proximo.SinkServer{SinkFactory: sinkFactory})
 	}
 	if sourceFactory != nil {
 		sourceFactory = instrumented.AsyncSourceFactory{
-			OpStatus:      opStatus,
-			CounterOpts:   sourceCounterOpts,
-			SourceFactory: sourceFactory,
+			BackendStatusChecker: backendChecker,
+			CounterOpts:          sourceCounterOpts,
+			SourceFactory:        sourceFactory,
 		}
 		proto.RegisterMessageSourceServer(grpcServer, &proximo.SourceServer{SourceFactory: sourceFactory})
 	}
