@@ -73,9 +73,11 @@ func (cs *statusChecker) CheckStatus(resp *op.CheckResponse) {
 	if result.workingConns*2 < len(cs.conns) {
 		// More than half of active connections are unhealthy
 		resp.Unhealthy(connsStr+problemsStr, failingAction, failingImpact)
+		return
 	}
 	if result.workingConns != result.totalConns || len(result.problems) > 0 {
 		resp.Degraded(connsStr+problemsStr, failingAction)
+		return
 	}
 	resp.Healthy(connsStr)
 }
