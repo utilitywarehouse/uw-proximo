@@ -239,7 +239,7 @@ func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proxim
 			CounterOpts:          sinkCounterOpts,
 			SinkFactory:          sinkFactory,
 		}
-		proto.RegisterMessageSinkServer(grpcServer, &proximo.SinkServer{SinkFactory: sinkFactory})
+		proto.RegisterMessageSinkServer(grpcServer, instrumented.NewInstrumentedSinkServer(sinkFactory))
 	}
 	if sourceFactory != nil {
 		sourceFactory = instrumented.AsyncSourceFactory{
@@ -247,7 +247,7 @@ func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proxim
 			CounterOpts:          sourceCounterOpts,
 			SourceFactory:        sourceFactory,
 		}
-		proto.RegisterMessageSourceServer(grpcServer, &proximo.SourceServer{SourceFactory: sourceFactory})
+		proto.RegisterMessageSourceServer(grpcServer, instrumented.NewInstrumentedSourceServer(sourceFactory))
 	}
 
 	errCh := make(chan error, 1)
