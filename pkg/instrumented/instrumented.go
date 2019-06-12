@@ -51,7 +51,7 @@ func (f AsyncSourceFactory) NewAsyncSource(ctx context.Context, req *proto.Start
 		source:        source,
 	}
 
-	return instrumented.NewAsyncMessageSource(source, f.CounterOpts, req.GetTopic()), nil
+	return NewAsyncMessageSource(source, f.CounterOpts, req.GetTopic(), req.GetConsumer()), nil
 }
 
 type instrumentedAsyncSink struct {

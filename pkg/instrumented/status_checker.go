@@ -103,15 +103,15 @@ func (cs *statusChecker) checkStatus() checkResult {
 			problems []string
 		)
 
-		for _, c := range cs.conns {
+		for id, c := range cs.conns {
 			s, err := c.conn.Status()
 			if err != nil {
-				problems = append(problems, err.Error())
+				problems = append(problems, fmt.Sprintf("%s - [%s]", id, err.Error()))
 				cs.incFailedForConn(c)
 				continue
 			}
 			if len(s.Problems) > 0 {
-				problems = append(problems, s.Problems...)
+				problems = append(problems, fmt.Sprintf("%s - [%s]", id, strings.Join(s.Problems, ", ")))
 			}
 			if !s.Working {
 				cs.incFailedForConn(c)
