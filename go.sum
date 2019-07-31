@@ -155,8 +155,8 @@ github.com/utilitywarehouse/go-operational v0.0.0-20190722153447-b0f3f6284543/go
 github.com/uw-labs/proximo v0.0.0-20190607090713-cfacb4e8089d h1:3P86Jb1TyJ4vJSyBNQzWYQCFnfDJBmZqhL5pNwZ33Y0=
 github.com/uw-labs/proximo v0.0.0-20190607090713-cfacb4e8089d/go.mod h1:qvhJ61jBx9RI4vrThNU4jroHCMpbU850pzmm+1b4fYk=
 github.com/uw-labs/substrate v0.0.0-20190606111548-e9b3a4b7c12c/go.mod h1:dyyAUJcMCwdJ5EaYf8bh2rCNvSH9wwQEIpfZwt+bOn8=
-github.com/uw-labs/substrate v0.0.0-20190723150030-a9fec7bed822 h1:CWbUgM4ES5Sgi6Nrrgzgd77/bNTMcnZV2xPs8C4Q3UQ=
-github.com/uw-labs/substrate v0.0.0-20190723150030-a9fec7bed822/go.mod h1:dyyAUJcMCwdJ5EaYf8bh2rCNvSH9wwQEIpfZwt+bOn8=
+github.com/uw-labs/substrate v0.0.0-20190731152401-748c4d978bdc h1:v71z6n9weghA/cerUTpRja2uCEtaL/iNDBFROvhXKqM=
+github.com/uw-labs/substrate v0.0.0-20190731152401-748c4d978bdc/go.mod h1:dyyAUJcMCwdJ5EaYf8bh2rCNvSH9wwQEIpfZwt+bOn8=
 github.com/uw-labs/sync v0.0.0-20190307114256-1bb306bf6e71 h1:1fL6kfRp9ebXBzK3powp5uKM3dCtK62RCiadQDqcR1Q=
 github.com/uw-labs/sync v0.0.0-20190307114256-1bb306bf6e71/go.mod h1:zTU/pesbF9d3ZN7+XwKhdE50y0SCCblmzwukXRnZkXs=
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c/go.mod h1:lB8K/P019DLNhemzwFU4jHLhdvlE6uDZjXFejJXr49I=
