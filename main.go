@@ -10,19 +10,16 @@ import (
 	"syscall"
 	"time"
 
-	"google.golang.org/grpc/health"
-
-	"github.com/utilitywarehouse/uw-proximo/pkg/instrumented"
-
 	"github.com/Shopify/sarama"
 	cli "github.com/jawher/mow.cli"
-	stan "github.com/nats-io/go-nats-streaming"
+	stan "github.com/nats-io/stan.go"
 	"github.com/pkg/errors"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/keepalive"
 
@@ -31,6 +28,8 @@ import (
 	"github.com/uw-labs/proximo/backend/mem"
 	"github.com/uw-labs/proximo/backend/natsstreaming"
 	"github.com/uw-labs/proximo/proto"
+
+	"github.com/utilitywarehouse/uw-proximo/pkg/instrumented"
 )
 
 const (
