@@ -152,8 +152,8 @@ github.com/tv42/httpunix v0.0.0-20150427012821-b75d8614f926/go.mod h1:9ESjWnEqri
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/utilitywarehouse/go-operational v0.0.0-20190722153447-b0f3f6284543 h1:9FhFDvYCbsKhHO4mLJbmb3dFroInvausfvYu8yZJpJE=
 github.com/utilitywarehouse/go-operational v0.0.0-20190722153447-b0f3f6284543/go.mod h1:FY7ihaXC85xcuUAR65IDK3jGuDMJGeu/rGvDN3SGO2w=
-github.com/uw-labs/proximo v0.0.0-20190607090713-cfacb4e8089d h1:3P86Jb1TyJ4vJSyBNQzWYQCFnfDJBmZqhL5pNwZ33Y0=
-github.com/uw-labs/proximo v0.0.0-20190607090713-cfacb4e8089d/go.mod h1:qvhJ61jBx9RI4vrThNU4jroHCMpbU850pzmm+1b4fYk=
+github.com/uw-labs/proximo v0.0.0-20190913093050-8229af78f5dd h1:rEvgmQoJk1MxPhv0aVIyOB/NKMtbAzsEJcmL/d/vpUU=
+github.com/uw-labs/proximo v0.0.0-20190913093050-8229af78f5dd/go.mod h1:qvhJ61jBx9RI4vrThNU4jroHCMpbU850pzmm+1b4fYk=
 github.com/uw-labs/substrate v0.0.0-20190606111548-e9b3a4b7c12c/go.mod h1:dyyAUJcMCwdJ5EaYf8bh2rCNvSH9wwQEIpfZwt+bOn8=
 github.com/uw-labs/substrate v0.0.0-20190731152401-748c4d978bdc h1:v71z6n9weghA/cerUTpRja2uCEtaL/iNDBFROvhXKqM=
 github.com/uw-labs/substrate v0.0.0-20190731152401-748c4d978bdc/go.mod h1:dyyAUJcMCwdJ5EaYf8bh2rCNvSH9wwQEIpfZwt+bOn8=
