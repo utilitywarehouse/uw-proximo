@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/utilitywarehouse/go-operational/op"
 
 	"github.com/uw-labs/proximo"
 	"github.com/uw-labs/proximo/proto"
@@ -15,9 +14,9 @@ import (
 
 // AsyncSinkFactory adds metrics and health check to every new sink.
 type AsyncSinkFactory struct {
-	OpStatus    *op.Status
-	CounterOpts prometheus.CounterOpts
-	SinkFactory proximo.AsyncSinkFactory
+	BackendStatusChecker BackendStatusChecker
+	CounterOpts          prometheus.CounterOpts
+	SinkFactory          proximo.AsyncSinkFactory
 }
 
 func (f AsyncSinkFactory) NewAsyncSink(ctx context.Context, req *proto.StartPublishRequest) (substrate.AsyncMessageSink, error) {
@@ -26,9 +25,9 @@ func (f AsyncSinkFactory) NewAsyncSink(ctx context.Context, req *proto.StartPubl
 		return nil, err
 	}
 	sink = instrumentedAsyncSink{
-		opStatus: f.OpStatus,
-		hcName:   fmt.Sprintf("%s-%s", req.GetTopic(), generateID()),
-		sink:     sink,
+		statusChecker: f.BackendStatusChecker,
+		connID:        fmt.Sprintf("%s-%s", req.GetTopic(), generateID()),
+		sink:          sink,
 	}
 
 	return instrumented.NewAsyncMessageSink(sink, f.CounterOpts, req.GetTopic()), nil
@@ -36,9 +35,9 @@ func (f AsyncSinkFactory) NewAsyncSink(ctx context.Context, req *proto.StartPubl
 
 // AsyncSourceFactory adds metrics and health check to every new sink.
 type AsyncSourceFactory struct {
-	OpStatus      *op.Status
-	CounterOpts   prometheus.CounterOpts
-	SourceFactory proximo.AsyncSourceFactory
+	BackendStatusChecker BackendStatusChecker
+	CounterOpts          prometheus.CounterOpts
+	SourceFactory        proximo.AsyncSourceFactory
 }
 
 func (f AsyncSourceFactory) NewAsyncSource(ctx context.Context, req *proto.StartConsumeRequest) (substrate.AsyncMessageSource, error) {
@@ -47,27 +46,30 @@ func (f AsyncSourceFactory) NewAsyncSource(ctx context.Context, req *proto.Start
 		return nil, err
 	}
 	source = instrumentedAsyncSource{
-		opStatus: f.OpStatus,
-		hcName:   fmt.Sprintf("%s-%s-%s", req.GetTopic(), req.GetConsumer(), generateID()),
-		source:   source,
+		statusChecker: f.BackendStatusChecker,
+		connID:        fmt.Sprintf("%s-%s-%s", req.GetTopic(), req.GetConsumer(), generateID()),
+		source:        source,
 	}
 
-	return instrumented.NewAsyncMessageSource(source, f.CounterOpts, req.GetTopic()), nil
+	return NewAsyncMessageSource(source, f.CounterOpts, req.GetTopic(), req.GetConsumer()), nil
 }
 
 type instrumentedAsyncSink struct {
-	opStatus *op.Status
-	hcName   string
-	sink     substrate.AsyncMessageSink
+	statusChecker BackendStatusChecker
+	connID        string
+	sink          substrate.AsyncMessageSink
 }
 
 func (s instrumentedAsyncSink) PublishMessages(ctx context.Context, acks chan<- substrate.Message, messages <-chan substrate.Message) error {
-	s.opStatus.AddChecker(s.hcName, newOpsCheck(s.sink, "Can't publish messages."))
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	s.statusChecker.RegisterStatuser(s.connID, s.sink, cancel)
 	return s.sink.PublishMessages(ctx, acks, messages)
 }
 
 func (s instrumentedAsyncSink) Close() error {
-	s.opStatus.RemoveCheckers(s.hcName)
+	s.statusChecker.RemoveStatuser(s.connID)
 	return s.sink.Close()
 }
 
@@ -76,18 +78,21 @@ func (s instrumentedAsyncSink) Status() (*substrate.Status, error) {
 }
 
 type instrumentedAsyncSource struct {
-	opStatus *op.Status
-	hcName   string
-	source   substrate.AsyncMessageSource
+	statusChecker BackendStatusChecker
+	connID        string
+	source        substrate.AsyncMessageSource
 }
 
 func (s instrumentedAsyncSource) ConsumeMessages(ctx context.Context, messages chan<- substrate.Message, acks <-chan substrate.Message) error {
-	s.opStatus.AddChecker(s.hcName, newOpsCheck(s.source, "Can't consume messages."))
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	s.statusChecker.RegisterStatuser(s.connID, s.source, cancel)
 	return s.source.ConsumeMessages(ctx, messages, acks)
 }
 
 func (s instrumentedAsyncSource) Close() error {
-	s.opStatus.RemoveCheckers(s.hcName)
+	s.statusChecker.RemoveStatuser(s.connID)
 	return s.source.Close()
 }
 

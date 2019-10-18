@@ -11,13 +11,12 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	cli "github.com/jawher/mow.cli"
-	stan "github.com/nats-io/stan.go"
-	"github.com/pkg/errors"
-
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	cli "github.com/jawher/mow.cli"
+	stan "github.com/nats-io/stan.go"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -58,6 +57,13 @@ func main() {
 		Value:  8080,
 		Desc:   "Port to listen for healtcheck requests",
 		EnvVar: "PROXIMO_PROBE_PORT",
+	})
+
+	maxFailedChecks := app.Int(cli.IntOpt{
+		Name:   "max-failed-checks",
+		Value:  3,
+		Desc:   "Maximum number or consecutively failed health checks for a single connection.",
+		EnvVar: "PROXIMO_MAX_FAILED_CHECKS",
 	})
 
 	endpoints := app.String(cli.StringOpt{
@@ -183,7 +189,7 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-	if err := listenAndServe(sourceFactory, sinkFactory, *port, *probePort); err != nil {
+	if err := listenAndServe(sourceFactory, sinkFactory, *port, *probePort, *maxFailedChecks); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Server terminated cleanly")
@@ -205,8 +211,10 @@ func parseEndpoints(endpoints string) map[string]bool {
 	return enabled
 }
 
-func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proximo.AsyncSinkFactory, port, probePort int) error {
+func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proximo.AsyncSinkFactory, port, probePort, maxFailedChecks int) error {
 	opStatus := newOpStatus(port)
+	backendChecker := instrumented.NewBackendStatusChecker(maxFailedChecks)
+	opStatus.AddChecker("backend", backendChecker.CheckStatus)
 	startOperationalServer(probePort, opStatus)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
@@ -236,19 +244,19 @@ func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proxim
 
 	if sinkFactory != nil {
 		sinkFactory = instrumented.AsyncSinkFactory{
-			OpStatus:    opStatus,
-			CounterOpts: sinkCounterOpts,
-			SinkFactory: sinkFactory,
+			BackendStatusChecker: backendChecker,
+			CounterOpts:          sinkCounterOpts,
+			SinkFactory:          sinkFactory,
 		}
-		proto.RegisterMessageSinkServer(grpcServer, &proximo.SinkServer{SinkFactory: sinkFactory})
+		proto.RegisterMessageSinkServer(grpcServer, instrumented.NewInstrumentedSinkServer(sinkFactory))
 	}
 	if sourceFactory != nil {
 		sourceFactory = instrumented.AsyncSourceFactory{
-			OpStatus:      opStatus,
-			CounterOpts:   sourceCounterOpts,
-			SourceFactory: sourceFactory,
+			BackendStatusChecker: backendChecker,
+			CounterOpts:          sourceCounterOpts,
+			SourceFactory:        sourceFactory,
 		}
-		proto.RegisterMessageSourceServer(grpcServer, &proximo.SourceServer{SourceFactory: sourceFactory})
+		proto.RegisterMessageSourceServer(grpcServer, instrumented.NewInstrumentedSourceServer(sourceFactory))
 	}
 
 	errCh := make(chan error, 1)
