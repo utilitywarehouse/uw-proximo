@@ -5,7 +5,7 @@ BUILD_STAMP := $(shell date -u '+%Y-%m-%dT%H:%M')
 REVISION := $(GIT_SUMMARY)-$(GIT_BRANCH)-$(BUILD_STAMP)
 
 lint:
-	golangci-lint run --enable-all -D=lll,gochecknoglobals,gosec,funlen,wsl
+	golangci-lint run --enable-all -D=lll,gochecknoglobals,gosec,funlen,wsl,gochecknoinits,gomnd
 
 test:
 	go test -v -race -cover ./...
