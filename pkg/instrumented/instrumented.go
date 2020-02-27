@@ -9,7 +9,7 @@ import (
 	"github.com/uw-labs/proximo"
 	"github.com/uw-labs/proximo/proto"
 	"github.com/uw-labs/substrate"
-	"github.com/uw-labs/substrate/instrumented"
+	"github.com/uw-labs/substrate-tools/instrumented"
 )
 
 // AsyncSinkFactory adds metrics and health check to every new sink.
