@@ -188,7 +188,7 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-	if err := listenAndServe(sourceFactory, sinkFactory, *port, *probePort, *maxFailedChecks); err != nil {
+	if err := listenAndServe(sourceFactory, sinkFactory, *port, *probePort, *maxFailedChecks, *debug); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Server terminated cleanly")
@@ -210,7 +210,7 @@ func parseEndpoints(endpoints string) map[string]bool {
 	return enabled
 }
 
-func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proximo.AsyncSinkFactory, port, probePort, maxFailedChecks int) error {
+func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proximo.AsyncSinkFactory, port, probePort, maxFailedChecks int, debug bool) error {
 	opStatus := newOpStatus(port)
 	backendChecker := instrumented.NewBackendStatusChecker(maxFailedChecks)
 	opStatus.AddChecker("backend", backendChecker.CheckStatus)
@@ -247,7 +247,7 @@ func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proxim
 			CounterOpts:          sinkCounterOpts,
 			SinkFactory:          sinkFactory,
 		}
-		proto.RegisterMessageSinkServer(grpcServer, instrumented.NewInstrumentedSinkServer(sinkFactory))
+		proto.RegisterMessageSinkServer(grpcServer, instrumented.NewInstrumentedSinkServer(sinkFactory, debug))
 	}
 	if sourceFactory != nil {
 		sourceFactory = instrumented.AsyncSourceFactory{
@@ -255,7 +255,7 @@ func listenAndServe(sourceFactory proximo.AsyncSourceFactory, sinkFactory proxim
 			CounterOpts:          sourceCounterOpts,
 			SourceFactory:        sourceFactory,
 		}
-		proto.RegisterMessageSourceServer(grpcServer, instrumented.NewInstrumentedSourceServer(sourceFactory))
+		proto.RegisterMessageSourceServer(grpcServer, instrumented.NewInstrumentedSourceServer(sourceFactory, debug))
 	}
 
 	errCh := make(chan error, 1)
