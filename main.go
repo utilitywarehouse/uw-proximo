@@ -75,7 +75,7 @@ func main() {
 
 	debug := app.Bool(cli.BoolOpt{
 		Name:   "debug",
-		Desc:   "Produce debugging log output",
+		Desc:   "Enable debug mode, which will produce log output, and may be more resource intensive",
 		Value:  false,
 		EnvVar: "PROXIMO_DEBUG",
 	})
@@ -104,6 +104,7 @@ func main() {
 				sourceFactory = &kafka.AsyncSourceFactory{
 					Brokers: brokers,
 					Version: *kafkaVersion,
+					Debug:   *debug,
 				}
 			}
 			if enabled[publishEndpoint] {
@@ -187,6 +188,9 @@ func main() {
 
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
+	}
+	if *debug {
+		log.Println("Running in debug mode. This means producing log output and disabling message discarding.")
 	}
 	if err := listenAndServe(sourceFactory, sinkFactory, *port, *probePort, *maxFailedChecks, *debug); err != nil {
 		log.Fatal(err)
