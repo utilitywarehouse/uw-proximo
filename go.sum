@@ -281,6 +281,8 @@ github.com/uw-labs/substrate v0.0.0-20200421135951-417a57001a16 h1:SpPdKk0PvQeNj
 github.com/uw-labs/substrate v0.0.0-20200421135951-417a57001a16/go.mod h1:Pekn1NegVvRtOiWKZUY0jTjrzFKJKkxfxK6uwEnU/MM=
 github.com/uw-labs/substrate v0.0.0-20200423155849-5805738940ec h1:XOQ23fZVo7ZCzKiAOOiN9BWd9xkGieI16cBEkv1G07o=
 github.com/uw-labs/substrate v0.0.0-20200423155849-5805738940ec/go.mod h1:Pekn1NegVvRtOiWKZUY0jTjrzFKJKkxfxK6uwEnU/MM=
+github.com/uw-labs/substrate v0.0.0-20200423191445-cc8b2658266b h1:rBPL9AOX0zyBQ2j3cVgfVMCMjJuHSpUejqRDBd6O5eE=
+github.com/uw-labs/substrate v0.0.0-20200423191445-cc8b2658266b/go.mod h1:Pekn1NegVvRtOiWKZUY0jTjrzFKJKkxfxK6uwEnU/MM=
 github.com/uw-labs/substrate-tools v0.0.0-20200128101345-747f9cd547ac h1:3wWLMbHL4kXxopSZqaSUwdG8kumGS+dWOgxr/kR2ZnY=
 github.com/uw-labs/substrate-tools v0.0.0-20200128101345-747f9cd547ac/go.mod h1:h8ynbE07HrlsAYe3mxp0dnuWXyvJQ8RkDMQ+p/y/uGI=
 github.com/uw-labs/sync v0.0.0-20190307114256-1bb306bf6e71 h1:1fL6kfRp9ebXBzK3powp5uKM3dCtK62RCiadQDqcR1Q=
