@@ -65,6 +65,7 @@ func NewInstrumentedSourceServer(factory proximo.AsyncSourceFactory, debug bool)
 	return &sourceServer{
 		delegate: &proximo.SourceServer{
 			SourceFactory: factory,
+			SkipDiscard:   debug,
 		},
 		debug: debug,
 	}
