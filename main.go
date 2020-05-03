@@ -96,6 +96,12 @@ func main() {
 			Desc:   "Kafka Version e.g. 1.1.1, 0.10.2.0",
 			EnvVar: "PROXIMO_KAFKA_VERSION",
 		})
+		kafkaMaxMessageBytes := cmd.Int(cli.IntOpt{
+			Name:   "max-message-bytes",
+			Desc:   "Max message bytes to use in client config.  0 means client default",
+			EnvVar: "PROXIMO_KAFKA_MAX_MESSAGE_BYTES",
+			Value:  0,
+		})
 
 		cmd.Action = func() {
 			brokers := strings.Split(*brokerString, ",")
@@ -109,9 +115,10 @@ func main() {
 			}
 			if enabled[publishEndpoint] {
 				sinkFactory = &kafka.AsyncSinkFactory{
-					Brokers: brokers,
-					Version: *kafkaVersion,
-					Debug:   *debug,
+					Brokers:         brokers,
+					Version:         *kafkaVersion,
+					Debug:           *debug,
+					MaxMessageBytes: *kafkaMaxMessageBytes,
 				}
 			}
 
