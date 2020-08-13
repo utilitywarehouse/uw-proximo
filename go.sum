@@ -286,6 +286,8 @@ github.com/uw-labs/proximo v0.0.0-20200423162946-3d2d6131e7fd h1:jyENxXUPW/J3fPm
 github.com/uw-labs/proximo v0.0.0-20200423162946-3d2d6131e7fd/go.mod h1:bF5iSaoP4QOA33ulNhMquwgZYgIVMg5S09dJJFEwj1Q=
 github.com/uw-labs/proximo v0.0.0-20200804125958-b794ca50cc60 h1:LnPXOyMp6L4PbVM5DgdsNUE+rxCm8ZHzx8ktvGyhkzQ=
 github.com/uw-labs/proximo v0.0.0-20200804125958-b794ca50cc60/go.mod h1:U87qwNhNQZtzMV3hjcYYnwoPqUKe0AvLQaywtsqU9XM=
+github.com/uw-labs/proximo v0.0.0-20200813140152-73be4b48cb6e h1:QbFYyxtmmJ8vf1zuSrenpfz1Izw8FXEOeC6xZnj5674=
+github.com/uw-labs/proximo v0.0.0-20200813140152-73be4b48cb6e/go.mod h1:U87qwNhNQZtzMV3hjcYYnwoPqUKe0AvLQaywtsqU9XM=
 github.com/uw-labs/straw v0.0.0-20191028082632-df455ab35be2/go.mod h1:bVgIBcoAnl11UG58LiS78c/+ocH5s0QXKloPod/ODiQ=
 github.com/uw-labs/straw v0.0.0-20200213162553-01e9a0f94f69/go.mod h1:V/HU8rEA5SCAbjS32ztEM2s6yt9PxqTRH9BLlmGRnAE=
 github.com/uw-labs/substrate v0.0.0-20190606111548-e9b3a4b7c12c/go.mod h1:dyyAUJcMCwdJ5EaYf8bh2rCNvSH9wwQEIpfZwt+bOn8=
